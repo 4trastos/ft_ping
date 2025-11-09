@@ -13,20 +13,26 @@
 # include <fcntl.h>
 # include <threads.h>
 # include <sys/socket.h>
-# include <netinet/in.h>
+# include <netinet/ip.h>
+# include <netinet/ip_icmp.h>
+# include <sys/time.h>
 
-typedef struct s_ipheader
+struct ping_packet {
+    struct icmphdr   icmp_hdr;
+    struct timeval   timestamp;
+    char             data[48];
+};
+
+struct config
 {
+    unsigned char   verbose_mode;
+    unsigned char   hostname;
+    unsigned char   ip_address;
+};
 
-}   t_ipheader;
-
-typedef struct s_icmpheader
-{
-
-}   t_icmpheader;
 
 extern volatile sig_atomic_t g_sigint_received;
-extern volatile sig_atomic_t g_child_status_changed;
+extern volatile sig_atomic_t g_sigalrm_received;
 
 
 //*** Init Functions ***/
@@ -36,14 +42,14 @@ int main(int argc, char **argv);
 //*** Signal Handler ***/
 
 void    sigint_handler(int signum);
-void    sigchld_handler(int signum);
+void    sigalrm_handler(int signum);
 void    init_signal(void);
 
 //*** Ping logic ***/
 
 
-//*** Comunicatoin logic ***/
+//*** Statistics ***/
 
-
+void    ft_statistics(void);
 
 #endif

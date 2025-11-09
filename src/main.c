@@ -1,7 +1,7 @@
 #include "ft_ping.h"
 
 volatile sig_atomic_t g_sigint_received = 0;
-volatile sig_atomic_t g_child_status_changed = 0;
+volatile sig_atomic_t g_sigalrm_received = 0;
 
 int main(int argc, char **argv)
 {
@@ -10,7 +10,22 @@ int main(int argc, char **argv)
         printf("❌ Use: %s must have PROG [ARGS] ❌\n", argv[0]);
         return (1);
     }
+    
     init_signal();
+    // 1. **Parser** (-v, -?)
+    // 2. **Resolución DNS** 
+    // 3. **Socket creation** (sin enviar todavía)
+    // 4. **Signal handlers**
+    // 5. **Creación paquete ICMP** + checksum
+    // 6. **Envío** (sin recepción)
+    // 7. **Recepción** y cálculo RTT
+    // 8. **Bucle principal** completo
+    // 9. **Estadísticas** finales
+    // 10. **Testing** y ajustes de formato
+    while(!g_sigint_received)
+    {
+        printf("bucle principal\n");     
+    };
     return (0);
 }
 

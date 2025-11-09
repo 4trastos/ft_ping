@@ -5,30 +5,33 @@
 void    init_signal(void)
 {
     struct sigaction sa_int = {0};
-    struct sigaction sa_chld = {0};
+    struct sigaction sa_alrm = {0};
 
     sa_int.sa_handler = sigint_handler;
     sigemptyset(&sa_int.sa_mask);
     sa_int.sa_flags = 0;
 
-    sa_chld.sa_handler = sigchld_handler;
-    sigemptyset(&sa_chld.sa_mask);
-    sa_chld.sa_flags = SA_RESTART | SA_NOCLDSTOP;
+    sa_alrm.sa_handler = sigalrm_handler;
+    sigemptyset(&sa_alrm.sa_mask);
+    sa_alrm.sa_flags = 0;
 
     sigaction(SIGINT, &sa_int, NULL);
-    sigaction(SIGCHLD, &sa_chld, NULL);
+    sigaction(SIGALRM, &sa_alrm, NULL);
     signal(SIGQUIT, SIG_IGN);
 }
 
-void    sigchld_handler(int signum)
+// Timeout en recvfrom() → reintentar o marcar como packet loss
+void    sigalrm_handler(int signum)
 {
     (void)signum;
-    g_child_status_changed = 1;
+    g_sigalrm_received = 1;
 }
 
+// Usuario presiona Ctrl+C → mostrar estadísticas y salir
 void    sigint_handler(int signum)
 {
     (void)signum;
+    ft_statistics();
     g_sigint_received = 1;
 }
 
