@@ -5,14 +5,22 @@ volatile sig_atomic_t g_sigalrm_received = 0;
 
 int main(int argc, char **argv)
 {
-    if (argc < 2 || argc > 3)
+    struct config *conf;
+
+    if (argc < 2)
     {
-        printf("❌ Use: %s must have PROG [ARGS] ❌\n", argv[0]);
+        printf("%s: usage error: Destination address required \n", argv[0]);
         return (1);
     }
     
+    conf = malloc(sizeof(struct config));
+    if (!conf)
+        return (1);
     init_signal();
+    init_struct(conf);
     // 1. **Parser** (-v, -?)
+    if (ft_parser(conf, argv, argc) == -1)
+        return (1);
     // 2. **Resolución DNS** 
     // 3. **Socket creation** (sin enviar todavía)
     // 4. **Signal handlers**
@@ -26,6 +34,8 @@ int main(int argc, char **argv)
     {
         printf("bucle principal\n");     
     };
+    
+    free(conf);
     return (0);
 }
 
@@ -54,3 +64,9 @@ int main(int argc, char **argv)
 //
 //      recvfrom(sockfd, buffer, sizeof(buffer), 0, (struct sockaddr*)&src_addr, &addrlen);
 // ====================================================
+
+
+
+// H23&&mwub-JCha&7asg??!!-kuzfih
+
+// Himwub-vixzi9-kuzfih

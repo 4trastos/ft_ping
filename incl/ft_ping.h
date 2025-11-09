@@ -25,19 +25,24 @@ struct ping_packet {
 
 struct config
 {
-    unsigned char   verbose_mode;
-    unsigned char   hostname;
-    unsigned char   ip_address;
+    bool            verbose_mode;
+    bool            show_help;
+    bool            is_valid;
+    char            *hostname;
+    struct in_addr  ip_address;
 };
-
 
 extern volatile sig_atomic_t g_sigint_received;
 extern volatile sig_atomic_t g_sigalrm_received;
 
-
 //*** Init Functions ***/
 
-int main(int argc, char **argv);
+int     main(int argc, char **argv);
+
+//*** Parser Logic***/
+
+int     ft_parser(struct config *conf, char **argv, int argc);
+void    init_struct(struct config *conf);
 
 //*** Signal Handler ***/
 
@@ -45,7 +50,7 @@ void    sigint_handler(int signum);
 void    sigalrm_handler(int signum);
 void    init_signal(void);
 
-//*** Ping logic ***/
+//*** Ping Logic ***/
 
 
 //*** Statistics ***/

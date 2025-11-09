@@ -1,35 +1,43 @@
 #include "ft_ping.h"
 
-// PASO A PASO - PARSER DE ARGUMENTOS
-// PASO 1: Definir estructura de configuración
+// FLUJO DE EJEMPLO: ./ft_ping -v google.com
 
-//     Crear struct para guardar: verbose_mode, hostname, ip_address
+void    init_struct(struct config *conf)
+{
+    conf->verbose_mode = false;
+    conf->show_help = false;
+    conf->is_valid = false;
+    conf->hostname = NULL;
+}
 
-// PASO 2: Función de parser principal
+int     ft_parser(struct config *conf, char **argv, int argc)
+{
+    int     i = 1;
 
-//     Recorrer argv empezando desde argv[1]
-
-//     Identificar opciones que empiezan con -
-
-//     Para -v: activar modo verbose
-
-//     Para -?: mostrar ayuda y salir
-
-//     El primer argumento que NO empiece con - es el hostname destino
-
-// PASO 3: Validaciones
-
-//     Máximo 1 hostname permitido
-
-//     Opciones desconocidas → error
-
-//     Si solo hay opciones sin hostname → error
-
-//     Si no hay argumentos → error (ya lo tienes en main)
-
-// PASO 4: Guardar configuración
-
-//     Rellenar la struct con las opciones parseadas
-
-//     El hostname queda listo para resolución DNS
-
+    while (i < argc)
+    {
+        if (argv[i][0] == '-')
+        {
+            if (strcmp(argv[i], "-v") == 0)
+                conf->verbose_mode = true;
+            else if (strcmp(argv[i], "-?") == 0)
+                conf->show_help = true;
+            else
+            {
+                printf("%s: Error: Unknown option %s\n", argv[0], argv[i]);
+                return (-1);
+            }
+        }
+        else
+        {
+            if (conf->hostname != NULL)
+            {
+                printf("%s: Error: Only one hostname is allowed\n", argv[0]);
+                return (-1);
+            }
+            conf->hostname = argv[i];
+        }
+        i++;
+    }
+    return (0);
+}
