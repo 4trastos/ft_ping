@@ -9,6 +9,8 @@ void    init_struct(struct config *conf)
     conf->is_valid = false;
     conf->hostname = NULL;
     conf->sockfd = -1;
+    conf->packet = NULL;
+    conf->sequence = 0;
 }
 
 int     ft_parser(struct config *conf, char **argv, int argc)

@@ -28,12 +28,14 @@ struct ping_packet
 
 struct config
 {
-    bool            verbose_mode;
-    bool            show_help;
-    bool            is_valid;
-    char            *hostname;
-    struct in_addr  ip_address;
-    int             sockfd;
+    bool                verbose_mode;
+    bool                show_help;
+    bool                is_valid;
+    char                *hostname;
+    int                 sockfd;
+    uint16_t            sequence;
+    struct in_addr      ip_address;
+    struct ping_packet  *packet;
 };
 
 extern volatile sig_atomic_t g_sigint_received;
@@ -41,27 +43,29 @@ extern volatile sig_atomic_t g_sigalrm_received;
 
 //*** Init Functions ***/
 
-int     main(int argc, char **argv);
+int         main(int argc, char **argv);
 
 //*** Parser Logic***/
 
-void    init_struct(struct config *conf);
-void    show_help(void);
-int     ft_parser(struct config *conf, char **argv, int argc);
+void        init_struct(struct config *conf);
+void        show_help(void);
+int         ft_parser(struct config *conf, char **argv, int argc);
 
 //*** Signal Handler ***/
 
-void    sigint_handler(int signum);
-void    sigalrm_handler(int signum);
-void    init_signal(void);
+void        sigint_handler(int signum);
+void        sigalrm_handler(int signum);
+void        init_signal(void);
 
 //*** Ping Logic ***/
 
-int     dns_resolution(struct config *conf);
-int     socket_creation(struct config *conf);
+int         dns_resolution(struct config *conf);
+int         socket_creation(struct config *conf);
+int         icmp_creation(struct config *conf);
+uint16_t    calculate_checksum(void *packet, size_t len);
 
 //*** Statistics ***/
 
-void    ft_statistics(void);
+void        ft_statistics(void);
 
 #endif

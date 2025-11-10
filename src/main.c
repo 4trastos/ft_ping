@@ -7,6 +7,8 @@ void    cleanup(struct config *conf)
 {
     if (conf->sockfd != -1)
         close(conf->sockfd);
+    if (conf->packet != NULL)
+        free(conf->packet);
     free(conf);
 }
 
@@ -38,24 +40,35 @@ int main(int argc, char **argv)
         exit = 1;
     else if (socket_creation(conf) == -1)
         exit = 1;
-    // 5. **Creación paquete ICMP** + checksum
+    else if (icmp_creation(conf) == -1)
+        exit = 1;
     // 6. **Envío** (sin recepción)
     // 7. **Recepción** y cálculo RTT
     // 8. **Bucle principal** completo
-    // 9. **Estadísticas** finales
-    // 10. **Testing** y ajustes de formato
     else
     {
         bytes = (unsigned char *)&conf->ip_address;
         while(!g_sigint_received)
         {
-            printf("bucle principal\n");
+            if (icmp_creation(conf) == -1)
+            {
+                exit = 1;
+                break;
+            }
+
+            printf("bucle principal - sequence: ( %d )\n", conf->packet->icmp_hdr.un.echo.sequence);
             printf("[DEBUG:] Verbose: ( %d ) · Help: ( %d ) · Valid: ( %d ) · Hostname: ( %s )\n", conf->verbose_mode, conf->show_help, conf->is_valid, conf->hostname);
             printf("[DEBUG:] IP ADDRESS: ( %d.%d.%d.%d )\n", bytes[0], bytes[1], bytes[2], bytes[3]);
+            printf("[DEBUG:] SOCKET -> socket fd: ( %d )\n", conf->sockfd);
+            printf("[DEBUG:] CHECKSUM: ( %d )\n", conf->packet->icmp_hdr.checksum);
+            printf("[DEBUG HEX:] ICMP data: ( %02x.%02x.%02x.%02x )\n", conf->packet->icmp_hdr.type, conf->packet->icmp_hdr.checksum, conf->packet->icmp_hdr.un.echo.id, conf->packet->icmp_hdr.un.echo.sequence);
             sleep(2);
         };   
     }
-    
+
+    // 9. **Estadísticas** finales
+    // 10. **Testing** y ajustes de formato
+
     cleanup(conf);
     return (exit);
 }
