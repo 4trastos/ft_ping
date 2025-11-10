@@ -56,7 +56,7 @@ int main(int argc, char **argv)
                 break;
             }
 
-            printf("bucle principal - sequence: ( %d )\n", conf->packet->icmp_hdr.un.echo.sequence);
+            printf("[DEBUG:] bucle principal - sequence: ( %d )\n", conf->packet->icmp_hdr.un.echo.sequence);
             printf("[DEBUG:] Verbose: ( %d ) · Help: ( %d ) · Valid: ( %d ) · Hostname: ( %s )\n", conf->verbose_mode, conf->show_help, conf->is_valid, conf->hostname);
             printf("[DEBUG:] IP ADDRESS: ( %d.%d.%d.%d )\n", bytes[0], bytes[1], bytes[2], bytes[3]);
             printf("[DEBUG:] SOCKET -> socket fd: ( %d )\n", conf->sockfd);
