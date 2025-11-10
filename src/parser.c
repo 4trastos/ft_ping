@@ -8,6 +8,7 @@ void    init_struct(struct config *conf)
     conf->show_help = false;
     conf->is_valid = false;
     conf->hostname = NULL;
+    conf->sockfd = -1;
 }
 
 int     ft_parser(struct config *conf, char **argv, int argc)
