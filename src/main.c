@@ -29,7 +29,8 @@ int main(int argc, char **argv)
     }
     if (dns_resolution(conf) == -1)
         return (1);
-    // 3. **Socket creation** (sin enviar todavía)
+    if (socket_creation(conf) == -1)
+        return (1);
     // 4. **Signal handlers**
     // 5. **Creación paquete ICMP** + checksum
     // 6. **Envío** (sin recepción)

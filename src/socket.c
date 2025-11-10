@@ -1,5 +1,22 @@
 #include "ft_ping.h"
 
+int     socket_creation(struct config *conf)
+{
+    int ttl = 64;
+
+    conf->sockfd = socket(AF_INET, SOCK_RAW, IPPROTO_ICMP);
+    if (conf->sockfd == -1)
+    {
+        return (-1);
+    }
+    if (setsockopt(conf->sockfd, IPPROTO_IP, IP_TTL, &ttl, sizeof(ttl)) == -1)
+    {
+        return (-1);
+    }
+    return (0);
+}
+
+
 // ====================================================================
 //  crear socket:       raw_socket = socket(AF_INET, SOCK_RAW, int protocol);
 //  crear endpoint:     int socket(int domain, int type, int protocol);

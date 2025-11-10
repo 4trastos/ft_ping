@@ -32,6 +32,7 @@ struct config
     bool            is_valid;
     char            *hostname;
     struct in_addr  ip_address;
+    int             sockfd;
 };
 
 extern volatile sig_atomic_t g_sigint_received;
@@ -56,6 +57,7 @@ void    init_signal(void);
 //*** Ping Logic ***/
 
 int     dns_resolution(struct config *conf);
+int     socket_creation(struct config *conf);
 
 //*** Statistics ***/
 
