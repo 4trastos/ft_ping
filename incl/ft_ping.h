@@ -7,17 +7,19 @@
 # include <unistd.h>
 # include <signal.h>
 # include <stdbool.h>
-# include <time.h>
 # include <limits.h>
 # include <poll.h>
 # include <fcntl.h>
-# include <threads.h>
+# include <sys/types.h>
 # include <sys/socket.h>
+# include <netdb.h>
+# include <netinet/in.h>
 # include <netinet/ip.h>
 # include <netinet/ip_icmp.h>
 # include <sys/time.h>
 
-struct ping_packet {
+struct ping_packet
+{
     struct icmphdr   icmp_hdr;
     struct timeval   timestamp;
     char             data[48];
@@ -41,8 +43,9 @@ int     main(int argc, char **argv);
 
 //*** Parser Logic***/
 
-int     ft_parser(struct config *conf, char **argv, int argc);
 void    init_struct(struct config *conf);
+void    show_help(void);
+int     ft_parser(struct config *conf, char **argv, int argc);
 
 //*** Signal Handler ***/
 
@@ -52,6 +55,7 @@ void    init_signal(void);
 
 //*** Ping Logic ***/
 
+int     dns_resolution(struct config *conf);
 
 //*** Statistics ***/
 

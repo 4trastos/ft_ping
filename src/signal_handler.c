@@ -17,7 +17,6 @@ void    init_signal(void)
 
     sigaction(SIGINT, &sa_int, NULL);
     sigaction(SIGALRM, &sa_alrm, NULL);
-    signal(SIGQUIT, SIG_IGN);
 }
 
 // Timeout en recvfrom() → reintentar o marcar como packet loss
@@ -27,7 +26,6 @@ void    sigalrm_handler(int signum)
     g_sigalrm_received = 1;
 }
 
-// Usuario presiona Ctrl+C → mostrar estadísticas y salir
 void    sigint_handler(int signum)
 {
     (void)signum;

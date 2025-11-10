@@ -4,7 +4,7 @@ CFLAGS = -Wall -Werror -Wextra -g -Iincl
 RM = rm -f
 
 SRC = src/main.c src/signal_handler.c src/statistics.c src/socket.c src/request.c \
-	src/send_reply.c src/parser.c
+	src/send_reply.c src/parser.c src/dnsresoluton.c
 
 OBJS = $(SRC:.c=.o)
 

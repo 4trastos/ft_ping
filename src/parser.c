@@ -39,5 +39,30 @@ int     ft_parser(struct config *conf, char **argv, int argc)
         }
         i++;
     }
+
+    if (conf->hostname == NULL && !conf->show_help)
+    {
+        printf("Error: Destination hostname required\n");
+        return (-1);
+    }
+    conf->is_valid= true;
     return (0);
+}
+
+
+#include "ft_ping.h"
+
+void    show_help(void)
+{
+    printf("Usage: ft_ping [options] <destination>\n\n");
+    printf("Options:\n");
+    printf("  -v              verbose output\n");
+    printf("  -?              show this help\n\n");
+    printf("Arguments:\n");
+    printf("  <destination>   dns name or ip address\n\n");
+    printf("Examples:\n");
+    printf("  ft_ping google.com\n");
+    printf("  ft_ping -v 192.168.1.1\n");
+    printf("  ft_ping -?\n\n");
+    printf("ft_ping - a ping implementation for 42 project\n");
 }

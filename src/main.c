@@ -6,6 +6,7 @@ volatile sig_atomic_t g_sigalrm_received = 0;
 int main(int argc, char **argv)
 {
     struct config *conf;
+    unsigned char *bytes;
 
     if (argc < 2)
     {
@@ -18,10 +19,16 @@ int main(int argc, char **argv)
         return (1);
     init_signal();
     init_struct(conf);
-    // 1. **Parser** (-v, -?)
     if (ft_parser(conf, argv, argc) == -1)
         return (1);
-    // 2. **Resolución DNS** 
+    if (conf->show_help == true)
+    {
+        show_help();
+        free(conf);
+        return (0);
+    }
+    if (dns_resolution(conf) == -1)
+        return (1);
     // 3. **Socket creation** (sin enviar todavía)
     // 4. **Signal handlers**
     // 5. **Creación paquete ICMP** + checksum
@@ -30,9 +37,13 @@ int main(int argc, char **argv)
     // 8. **Bucle principal** completo
     // 9. **Estadísticas** finales
     // 10. **Testing** y ajustes de formato
+    bytes = (unsigned char *)&conf->ip_address;
     while(!g_sigint_received)
     {
-        printf("bucle principal\n");     
+        printf("bucle principal\n");
+        printf("[DEBUG:] Verbose: ( %d ) · Help: ( %d ) · Valid: ( %d ) · Hostname: ( %s )\n", conf->verbose_mode, conf->show_help, conf->is_valid, conf->hostname);
+        printf("[DEBUG:] IP ADDRESS: ( %d.%d.%d.%d )\n", bytes[0], bytes[1], bytes[2], bytes[3]);
+        sleep(2);
     };
     
     free(conf);
