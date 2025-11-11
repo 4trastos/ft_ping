@@ -11,6 +11,13 @@ void    init_struct(struct config *conf)
     conf->sockfd = -1;
     conf->packet = NULL;
     conf->sequence = 0;
+
+    conf->stats.packets_sent = 0;
+    conf->stats.packets_received = 0;
+    conf->stats.min_rtt = 0;
+    conf->stats.max_rtt = 0;
+    conf->stats.total_rtt = 0;
+    gettimeofday(&conf->stats.start_time, NULL);
 }
 
 int     ft_parser(struct config *conf, char **argv, int argc)
@@ -77,8 +84,7 @@ void        printf_verbose(struct config *conf)
     bytes = (unsigned char *)&conf->ip_address;
     printf("ft_ping: sock4.fd: %d (socktype: SOCK_RAW), hints.ai_family: AF_INET\n", conf->sockfd);
     printf("\nai->ai_family: AF_INET, ai->ai_canonname: '%s'\n", conf->hostname);
-    printf("PING %s (%d.%d.%d.%d) %ld(%ld) bytes of data.\n", 
-           conf->hostname, bytes[0], bytes[1], bytes[2], bytes[3], sizeof(conf->packet->data), sizeof(struct ping_packet));
+    printf("PING %s (%d.%d.%d.%d) %ld(%ld) bytes of data.\n", conf->hostname, bytes[0], bytes[1], bytes[2], bytes[3], sizeof(conf->packet->data), sizeof(struct ping_packet));
 
     return;
 }

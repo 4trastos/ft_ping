@@ -19,7 +19,6 @@ void    init_signal(void)
     sigaction(SIGALRM, &sa_alrm, NULL);
 }
 
-// Timeout en recvfrom() → reintentar o marcar como packet loss
 void    sigalrm_handler(int signum)
 {
     (void)signum;
@@ -29,7 +28,6 @@ void    sigalrm_handler(int signum)
 void    sigint_handler(int signum)
 {
     (void)signum;
-    ft_statistics();
     g_sigint_received = 1;
 }
 

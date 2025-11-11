@@ -8,7 +8,7 @@
 # include <signal.h>
 # include <stdbool.h>
 # include <limits.h>
-# include <poll.h>
+# include <arpa/inet.h> 
 # include <fcntl.h>
 # include <errno.h>
 # include <sys/types.h>
@@ -19,11 +19,21 @@
 # include <netinet/ip_icmp.h>
 # include <sys/time.h>
 
+struct statistics
+{
+    int             packets_sent;
+    int             packets_received;
+    double          min_rtt;
+    double          max_rtt;
+    double          total_rtt;
+    struct timeval  start_time;
+};
+
 struct ping_packet
 {
     struct icmphdr   icmp_hdr;
     struct timeval   timestamp;
-    char             data[48];
+    char             data[40];
 };
 
 struct config
@@ -36,6 +46,7 @@ struct config
     uint16_t            sequence;
     struct in_addr      ip_address;
     struct ping_packet  *packet;
+    struct statistics   stats;
 };
 
 extern volatile sig_atomic_t g_sigint_received;
@@ -64,10 +75,12 @@ int         socket_creation(struct config *conf);
 int         icmp_creation(struct config *conf);
 uint16_t    calculate_checksum(void *packet, size_t len);
 int         send_reply(struct config *conf);
+int         receive_response(struct config *conf);
+double      calculate_rtt(struct ping_packet *sent_packet);
 
 //*** Statistics ***/
 
-void        ft_statistics(void);
+void        show_statistics(struct config *conf);
 void        printf_verbose(struct config *conf);
 
 #endif

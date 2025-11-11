@@ -1,0 +1,37 @@
+# Host inexistente
+./ft_ping hostquenoexiste.com
+
+# IP inválida
+./ft_ping 999.999.999.999
+
+# Sin argumentos
+./ft_ping
+
+# Múltiples hosts (debe dar error)
+./ft_ping google.com yahoo.com
+
+# Localhost
+./ft_ping localhost
+
+# IP directa
+./ft_ping 8.8.8.8
+
+# Host con IPv6 (debe fallar elegantemente)
+./ft_ping ipv6.google.com
+
+# Help
+./ft_ping -?
+
+# Verbose con diferentes hosts
+./ft_ping -v google.com
+./ft_ping -v 127.0.0.1
+
+# Packetes perdidos
+./ft_ping 10.0.0.1
+./ft_ping 192.168.255.255
+
+# Comportamiento con señales:
+
+Ctrl+C: Debe mostrar estadísticas y salir limpio
+Ctrl+Z: Debe pausarse (y luego fg para continuar)
+Timeout: Debe manejar paquetes perdidos correctamente

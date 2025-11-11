@@ -40,15 +40,17 @@ int main(int argc, char **argv)
         exit = 1;
     else if (socket_creation(conf) == -1)
         exit = 1;
-    else if (icmp_creation(conf) == -1)
-        exit = 1;
-    else if (send_reply(conf) == -1)
-        exit = 1;
-    if (conf->verbose_mode)
-        printf_verbose(conf);
-    if (exit == 0)
+    else
     {
-        bytes = (unsigned char *)&conf->ip_address;
+        if (conf->verbose_mode)
+            printf_verbose(conf);
+        else
+        {
+            bytes = (unsigned char *)&conf->ip_address;
+            printf("PING %s (%d.%d.%d.%d) %ld(%ld) bytes of data.\n",
+                conf->hostname, bytes[0], bytes[1], bytes[2], bytes[3], sizeof(conf->packet->data), sizeof(struct ping_packet));
+        }
+
         while(!g_sigint_received)
         {
             if (icmp_creation(conf) == -1)
@@ -56,52 +58,28 @@ int main(int argc, char **argv)
                 exit = 1;
                 break;
             }
-
-            printf("[DEBUG:] bucle principal - sequence: ( %d )\n", conf->packet->icmp_hdr.un.echo.sequence);
-            printf("[DEBUG:] Verbose: ( %d ) · Help: ( %d ) · Valid: ( %d ) · Hostname: ( %s )\n", conf->verbose_mode, conf->show_help, conf->is_valid, conf->hostname);
-            printf("[DEBUG:] IP ADDRESS: ( %d.%d.%d.%d )\n", bytes[0], bytes[1], bytes[2], bytes[3]);
-            printf("[DEBUG:] SOCKET -> socket fd: ( %d )\n", conf->sockfd);
-            printf("[DEBUG:] CHECKSUM: ( %d )\n", conf->packet->icmp_hdr.checksum);
-            printf("[DEBUG HEX:] ICMP data: ( %02x.%02x.%02x.%02x )\n", conf->packet->icmp_hdr.type, conf->packet->icmp_hdr.checksum, conf->packet->icmp_hdr.un.echo.id, conf->packet->icmp_hdr.un.echo.sequence);
-            sleep(2);
-        };   
+            if (send_reply(conf) == -1)
+            {
+                exit = 1;
+                break;
+            }
+            if (receive_response(conf) == -1){}
+            sleep(1);
+        };
+        if (g_sigint_received)
+            show_statistics(conf);
     }
-
-    // 9. **Estadísticas** finales
-    // 10. **Testing** y ajustes de formato
 
     cleanup(conf);
     return (exit);
 }
 
-// ====================================================
-//         Estructura típica de uso:
-// ====================================================
-//              1. Crear socket
-//
-//      int sockfd = socket(AF_INET, SOCK_RAW, IPPROTO_ICMP);
-//
-//              2. Configurar opciones (TTL, timeout)
-//
-//      int ttl = 64;
-//      setsockopt(sockfd, IPPROTO_IP, IP_TTL, &ttl, sizeof(ttl));
-//
-//              3. Construir paquete ICMP
-//
-//      struct icmp_packet packet;
-//          ... llenar con ECHO_REQUEST
-//
-//              4. Enviar
-//
-//      sendto(sockfd, &packet, sizeof(packet), 0, (struct sockaddr*)&dest_addr, sizeof(dest_addr));
-//
-//              5. Recibir respuesta
-//
-//      recvfrom(sockfd, buffer, sizeof(buffer), 0, (struct sockaddr*)&src_addr, &addrlen);
-// ====================================================
-
-
-
+// printf("[DEBUG:] bucle principal - sequence: ( %d )\n", conf->packet->icmp_hdr.un.echo.sequence);
+// printf("[DEBUG:] Verbose: ( %d ) · Help: ( %d ) · Valid: ( %d ) · Hostname: ( %s )\n", conf->verbose_mode, conf->show_help, conf->is_valid, conf->hostname);
+// printf("[DEBUG:] IP ADDRESS: ( %d.%d.%d.%d )\n", bytes[0], bytes[1], bytes[2], bytes[3]);
+// printf("[DEBUG:] SOCKET -> socket fd: ( %d )\n", conf->sockfd);
+// printf("[DEBUG:] CHECKSUM: ( %d )\n", conf->packet->icmp_hdr.checksum);
+// printf("[DEBUG HEX:] ICMP data: ( %02x.%02x.%02x.%02x )\n", conf->packet->icmp_hdr.type, conf->packet->icmp_hdr.checksum, conf->packet->icmp_hdr.un.echo.id, conf->packet->icmp_hdr.un.echo.sequence);
 // H23&&mwub-JCha&7asg??!!-kuzfih
 
 // Himwub-vixzi9-kuzfih
