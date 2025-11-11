@@ -69,3 +69,16 @@ void    show_help(void)
     printf("  ft_ping -?\n\n");
     printf("ft_ping - a ping implementation for 42 project\n");
 }
+
+void        printf_verbose(struct config *conf)
+{
+    unsigned char *bytes;
+
+    bytes = (unsigned char *)&conf->ip_address;
+    printf("ft_ping: sock4.fd: %d (socktype: SOCK_RAW), hints.ai_family: AF_INET\n", conf->sockfd);
+    printf("\nai->ai_family: AF_INET, ai->ai_canonname: '%s'\n", conf->hostname);
+    printf("PING %s (%d.%d.%d.%d) %ld(%ld) bytes of data.\n", 
+           conf->hostname, bytes[0], bytes[1], bytes[2], bytes[3], sizeof(conf->packet->data), sizeof(struct ping_packet));
+
+    return;
+}

@@ -42,10 +42,11 @@ int main(int argc, char **argv)
         exit = 1;
     else if (icmp_creation(conf) == -1)
         exit = 1;
-    // 6. **Envío** (sin recepción)
-    // 7. **Recepción** y cálculo RTT
-    // 8. **Bucle principal** completo
-    else
+    else if (send_reply(conf) == -1)
+        exit = 1;
+    if (conf->verbose_mode)
+        printf_verbose(conf);
+    if (exit == 0)
     {
         bytes = (unsigned char *)&conf->ip_address;
         while(!g_sigint_received)
