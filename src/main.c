@@ -58,7 +58,7 @@ int main(int argc, char **argv)
                 exit = 1;
                 break;
             }
-            if (send_reply(conf) == -1)
+            if (send_socket(conf) == -1)
             {
                 exit = 1;
                 break;

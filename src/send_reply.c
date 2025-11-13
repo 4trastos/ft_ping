@@ -69,7 +69,7 @@ int receive_response(struct config *conf)
     return (0);
 }
 
-int send_reply(struct config *conf)
+int send_socket(struct config *conf)
 {
     struct sockaddr_in  *dest_addr;
     ssize_t             bytes_sent;

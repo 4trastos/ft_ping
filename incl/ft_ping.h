@@ -74,7 +74,7 @@ int         dns_resolution(struct config *conf);
 int         socket_creation(struct config *conf);
 int         icmp_creation(struct config *conf);
 uint16_t    calculate_checksum(void *packet, size_t len);
-int         send_reply(struct config *conf);
+int         send_socket(struct config *conf);
 int         receive_response(struct config *conf);
 double      calculate_rtt(struct ping_packet *sent_packet);
 
