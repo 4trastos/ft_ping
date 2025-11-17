@@ -3,7 +3,7 @@
 int     socket_creation(struct config *conf)
 {
     struct timeval  timeout = {9, 0};
-    int             ttl = 64;
+    int             ttl = conf->ttl;
 
     conf->sockfd = socket(AF_INET, SOCK_RAW, IPPROTO_ICMP);
     if (conf->sockfd == -1)

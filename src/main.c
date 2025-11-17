@@ -7,8 +7,6 @@ void    cleanup(struct config *conf)
 {
     if (conf->sockfd != -1)
         close(conf->sockfd);
-    if (conf->packet != NULL)
-        free(conf->packet);
     free(conf);
 }
 
@@ -47,8 +45,8 @@ int main(int argc, char **argv)
         else
         {
             bytes = (unsigned char *)&conf->ip_address;
-            printf("PING %s (%d.%d.%d.%d) %ld(%ld) bytes of data.\n",
-                conf->hostname, bytes[0], bytes[1], bytes[2], bytes[3], sizeof(conf->packet->data), sizeof(struct ping_packet));
+            printf("PING %s (%d.%d.%d.%d): %d data bytes.\n",
+                conf->hostname, bytes[0], bytes[1], bytes[2], bytes[3], ICMP_PAYLOAD_SIZE);
         }
 
         while(!g_sigint_received)
@@ -83,3 +81,7 @@ int main(int argc, char **argv)
 // H23&&mwub-JCha&7asg??!!-kuzfih
 
 // Himwub-vixzi9-kuzfih
+
+
+// 168539
+// RB1313alexz?

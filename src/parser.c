@@ -9,8 +9,8 @@ void    init_struct(struct config *conf)
     conf->is_valid = false;
     conf->hostname = NULL;
     conf->sockfd = -1;
-    conf->packet = NULL;
     conf->sequence = 0;
+    conf->ttl = 64;
 
     conf->stats.packets_sent = 0;
     conf->stats.packets_received = 0;
@@ -32,6 +32,21 @@ int     ft_parser(struct config *conf, char **argv, int argc)
                 conf->verbose_mode = true;
             else if (strcmp(argv[i], "-?") == 0)
                 conf->show_help = true;
+            else if (strcmp(argv[i], "--ttl") == 0)
+            {
+                i++;
+                if (i >= argc)
+                {
+                    printf("%s: Error: --ttl requires a value\n", argv[0]);
+                    return (-1);
+                }
+                conf->ttl = atoi(argv[i]);
+                if (conf->ttl <= 0 || conf->ttl > 255)
+                {
+                    printf("%s: Error: TTL must be between 1 and 255\n", argv[0]);
+                    return (-1);
+                }  
+            }
             else
             {
                 printf("%s: Error: Unknown option %s\n", argv[0], argv[i]);
@@ -59,21 +74,20 @@ int     ft_parser(struct config *conf, char **argv, int argc)
     return (0);
 }
 
-
-#include "ft_ping.h"
-
 void    show_help(void)
 {
     printf("Usage: ft_ping [options] <destination>\n\n");
     printf("Options:\n");
     printf("  -v              verbose output\n");
-    printf("  -?              show this help\n\n");
-    printf("Arguments:\n");
+    printf("  -?              show this help\n");
+    printf("  --ttl=N         set the time-to-live value (optional)\n");
+    printf("\nArguments:\n");
     printf("  <destination>   dns name or ip address\n\n");
     printf("Examples:\n");
     printf("  ft_ping google.com\n");
     printf("  ft_ping -v 192.168.1.1\n");
-    printf("  ft_ping -?\n\n");
+    printf("  ft_ping -?\n");
+    printf("  ft_ping --ttl 4 google.es\n\n");
     printf("ft_ping - a ping implementation for 42 project\n");
 }
 
@@ -82,9 +96,12 @@ void        printf_verbose(struct config *conf)
     unsigned char *bytes;
 
     bytes = (unsigned char *)&conf->ip_address;
-    printf("ft_ping: sock4.fd: %d (socktype: SOCK_RAW), hints.ai_family: AF_INET\n", conf->sockfd);
-    printf("\nai->ai_family: AF_INET, ai->ai_canonname: '%s'\n", conf->hostname);
-    printf("PING %s (%d.%d.%d.%d) %ld(%ld) bytes of data.\n", conf->hostname, bytes[0], bytes[1], bytes[2], bytes[3], sizeof(conf->packet->data), sizeof(struct ping_packet));
+    //printf("ft_ping: sock4.fd: %d (socktype: SOCK_RAW), hints.ai_family: AF_INET\n", conf->sockfd);
+    //printf("\nai->ai_family: AF_INET, ai->ai_canonname: '%s'\n", conf->hostname);
+    printf("PING %s (%d.%d.%d.%d): %d data bytes, id 0x%04x = %d\n", 
+        conf->hostname, bytes[0], bytes[1], bytes[2], bytes[3], 
+        ICMP_PAYLOAD_SIZE, 
+        getpid() & 0xFFFF, getpid());
 
     return;
 }

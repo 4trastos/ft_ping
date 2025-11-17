@@ -2,27 +2,40 @@
 
 void    show_statistics(struct config *conf)
 {
-    struct timeval  end_time;
-    double          total_time;
     double          avg_rtt;
+    double          stddev;
     int             packet_loss;
+    int             packets_received;
 
-    gettimeofday(&end_time, NULL);
     packet_loss = 0;
-    avg_rtt = 0;
-    total_time = (end_time.tv_sec - conf->stats.start_time.tv_sec) * 1000.0 +
-                (end_time.tv_usec - conf->stats.start_time.tv_usec) / 1000.0;
+    avg_rtt = 0.0;
+    stddev = 0.0;
+    packets_received= conf->stats.packets_received;
 
     if (conf->stats.packets_sent > 0)
-        packet_loss = (int)((conf->stats.packets_sent - conf->stats.packets_received) * 1000.0 / conf->stats.packets_sent);
-    if (conf->stats.packets_received > 0)
-        avg_rtt = conf->stats.total_rtt / conf->stats.packets_received;
+        packet_loss = (int)((conf->stats.packets_sent - conf->stats.packets_received) * 100.0 /conf->stats.packets_sent);
 
-    printf("\n--- %s ping statistics ---\n", conf->hostname);
-    printf("%d packets transmitted, %d received, %d%% packet loss, time %.0fms\n", 
-            conf->stats.packets_sent, conf->stats.packets_received, packet_loss, total_time);
+    
+    if (packets_received > 0)
+        avg_rtt = conf->stats.total_rtt / packets_received;
+    
+    if (packets_received > 0)
+    {
+        double mean = avg_rtt;
+        double mean_sq = conf->stats.total_rtt_sq / packets_received;
+        double variance = mean_sq - (mean * mean);
+        if (variance < 0 && variance > -1e-12) /* evitar -0 por errores numéricos */
+            variance = 0;
+        if (variance < 0)
+            variance = 0; /* defensa adicional */
+        stddev = sqrt(variance);
+    }
+
+    printf("\n--- %s ping statistics ---\n", conf->hostname ? conf->hostname : "host");
+    printf("%d packets transmitted, %d received, %d%% packet loss\n", 
+            conf->stats.packets_sent, conf->stats.packets_received, packet_loss);
     
     if (conf->stats.packets_received > 0)
-        printf("rtt min/avg/max/mdev = %.3f/%.3f/%.3f/%.3f ms\n", conf->stats.min_rtt, avg_rtt, conf->stats.max_rtt, 0.0);
+        printf("round-trip min/avg/max/stddev = %.3f/%.3f/%.3f/%.3f ms\n", conf->stats.min_rtt, avg_rtt, conf->stats.max_rtt, stddev);
     return;
 }

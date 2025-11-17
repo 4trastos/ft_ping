@@ -18,6 +18,10 @@
 # include <netinet/ip.h>
 # include <netinet/ip_icmp.h>
 # include <sys/time.h>
+# include <math.h>
+
+# define MAX_PACKETS 1024
+# define ICMP_PAYLOAD_SIZE 56
 
 struct statistics
 {
@@ -26,6 +30,7 @@ struct statistics
     double          min_rtt;
     double          max_rtt;
     double          total_rtt;
+    double          total_rtt_sq;
     struct timeval  start_time;
 };
 
@@ -33,7 +38,7 @@ struct ping_packet
 {
     struct icmphdr   icmp_hdr;
     struct timeval   timestamp;
-    char             data[40];
+    char             data[ICMP_PAYLOAD_SIZE];
 };
 
 struct config
@@ -43,9 +48,10 @@ struct config
     bool                is_valid;
     char                *hostname;
     int                 sockfd;
+    int                 ttl;
     uint16_t            sequence;
     struct in_addr      ip_address;
-    struct ping_packet  *packet;
+    struct ping_packet  packets[MAX_PACKETS];
     struct statistics   stats;
 };
 

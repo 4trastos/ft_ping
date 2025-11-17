@@ -4,24 +4,22 @@
 
 int     icmp_creation(struct config *conf)
 {
-    if (conf->packet == NULL)
-    {
-        conf->packet = malloc(sizeof(struct ping_packet));
-        if (!conf->packet)
-            return (-1);
-    }
+    struct ping_packet *packet = NULL;
 
+    if (conf->sequence >= MAX_PACKETS)
+        return (-1);
+    packet = &conf->packets[conf->sequence];    
+    
+    packet->icmp_hdr.type = 8;                      // (ECHO_REQUEST)
+    packet->icmp_hdr.code = 0;
+    packet->icmp_hdr.checksum = 0;
+    packet->icmp_hdr.un.echo.id = getpid();
+    packet->icmp_hdr.un.echo.sequence = conf->sequence;
+    gettimeofday(&packet->timestamp, NULL);
+    memset(packet->data, 0, ICMP_PAYLOAD_SIZE);
+
+    packet->icmp_hdr.checksum = calculate_checksum(packet,sizeof(struct ping_packet));
     conf->sequence++;
-    conf->packet->icmp_hdr.type = 8;                      // (ECHO_REQUEST)
-    conf->packet->icmp_hdr.code = 0;
-    conf->packet->icmp_hdr.checksum = 0;
-    conf->packet->icmp_hdr.un.echo.id = getpid();
-    conf->packet->icmp_hdr.un.echo.sequence = conf->sequence;
-    gettimeofday(&conf->packet->timestamp, NULL);
-    memset(conf->packet->data, 0, 48);
-
-    conf->packet->icmp_hdr.checksum = calculate_checksum(conf->packet,sizeof(struct ping_packet));
-
     return (0);
 }
 
